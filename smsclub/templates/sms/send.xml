@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<request_sendsms>
+      <username><![CDATA[{{ username }}]]></username>
+      <password><![CDATA[{{ password }}]]></password>
+      <from><![CDATA[{{ from }}]]></from>
+    {% for to,text in to_text %}
+        <to><![CDATA[{{ to }}]]></to>
+        <text><![CDATA[{{ text }}]]></text>
+    {% endfor %}
+</request_sendsms>

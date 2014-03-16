@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<request_getstate>
+            <username><![CDATA[{{ username }}]]></username>
+            <password><![CDATA[{{ password }}]]></password>
+            <smscid><![CDATA[{% for part in parts %}{{ part.part }}{% endfor %}]]></smscid>
+</request_getstate>
