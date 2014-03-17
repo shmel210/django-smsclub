@@ -19,26 +19,24 @@ SMS_STATUS_URL = getattr(settings, 'SMS_STATUS_URL', 'http://smpp.smsclub.mobi/h
 def parse_sms_response(response, content, to_text):
     if response.status != 200:
         logger.error(u'cant access to sms gateway. Response status: %s' % (response.status,))
-        return {
-            'status': 'ERROR',
-            'text': 'cant access to sms gateway',
-        }
+        return False
     else:
-        content = '<?xml version="1.0" encoding="utf-8"?><response><status>OK</status><text>dsf</text><ids><mess>p0066a46dc</mess></ids></response>'
+        #content = '<?xml version="1.0" encoding="utf-8"?><response><status>OK</status><text>dsf</text><ids><mess>p0066a46dc</mess></ids></response>'
         dom = parseString(content)
         phones = {}
         sms_sended = []
-        for (phone, text) in to_text:
+        for index, (phone, text) in enumerate(to_text):
             sms = Sms(phone=phone, result_text=dom.getElementsByTagName('text')[0].childNodes[0].data,
                       status=dom.getElementsByTagName('status')[0].childNodes[0].data, body=text)
             sms.save()
             sms_sended.append(sms)
-            for mess in dom.getElementsByTagName('mess'):
-                try:
-                    if mess.attributes['tel'].value == phone.replace('+', ''):
-                        SmsPart(sms=sms, part=mess.childNodes[0].data).save()
-                except KeyError:
-                    SmsPart(sms=sms, part=mess.childNodes[0].data).save()
+            SmsPart(sms=sms, part=dom.getElementsByTagName('mess')[index].childNodes[0].data).save()
+            #for mess in dom.getElementsByTagName('mess'):
+            #    try:
+            #        if mess.attributes['tel'].value == phone.replace('+', ''):
+            #            SmsPart(sms=sms, part=mess.childNodes[0].data).save()
+            #    except KeyError:
+            #        SmsPart(sms=sms, part=mess.childNodes[0].data).save()
         return sms_sended
 
 
@@ -80,10 +78,7 @@ def get_status(parts):
     logger.debug(content)
     if response.status != 200:
         logger.error(u'cant access to sms gateway. Response status: %s' % (response.status,))
-        return {
-            'status': 'ERROR',
-            'text': 'cant access to sms gateway',
-        }
+        return False
     else:
         dom = parseString(content)
         for key, smscid in enumerate(dom.getElementsByTagName('smscid')):

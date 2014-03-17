@@ -8,9 +8,13 @@ class Sms(models.Model):
     result_text = models.CharField(_('result_text'), max_length=255)
     status = models.CharField(_('status'), max_length=100)
     body = models.TextField(_('body'))
+    created = models.DateTimeField(auto_now_add=True, verbose_name=_('created'))
+    updated = models.DateTimeField(auto_now=True, verbose_name=_('updated'))
 
 
 class SmsPart(models.Model):
     sms = models.ForeignKey('Sms')
     part = models.CharField(_('part'), max_length=255, unique=True)
     state = models.CharField(_('state'), max_length=100, default='NOREPORT')
+    created = models.DateTimeField(auto_now_add=True, verbose_name=_('created'))
+    updated = models.DateTimeField(auto_now=True, verbose_name=_('updated'))
